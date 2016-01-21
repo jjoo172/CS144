@@ -3,6 +3,7 @@ from pprint import pprint
 import networkx as nx
 import matplotlib.pyplot as plt
 import plotly.plotly as py
+import numpy as np
 
 with open('net_sci_coauthorships.txt') as data_file:    
     data = json.load(data_file)
@@ -43,16 +44,42 @@ for node in nx.nodes(G):
 	degrees.append(nx.degree(G, node))
 	#num_nodes = degree(node);
 
+degrees.sort()
+
+#plot the histogram of the degrees
 plt.hist(degrees)
-plt.title("Gaussian Histogram")
-plt.xlabel("Value")
-plt.ylabel("Frequency")
+plt.title("Number of vertices with various degrees")
+plt.xlabel("Degree")
+plt.ylabel("Number of vertices")
 
 fig = plt.gcf()
 
 plt.show()
 
-#plot_url = py.plot_mpl(fig, filename='mpl-basic-histogram')
+# plot the ccdf by first finding the total amount, and then
+# iterating through each value of x, and determining the probability of that x
+# over the total.
+
+degrees.sort()
+
+ccdf = []
+
+total = sum(degrees)
+
+i = 0.0
+# iterate through each degree, denoted by i
+while (i <= max(degrees)):
+	running_sum = 0.0
+	# for each node, if the degree is less than or equal to i, add it to the running_sum
+	for n in degrees:
+		if n <= i:
+			running_sum += n
+	i = i + 1.0
+	ccdf.append(1 - (running_sum/total))
+
+plt.plot(ccdf)
+plt.show()
+
 
 """
 degree_sequence=sorted(nx.degree(G).values(),reverse=True) # degree sequence
