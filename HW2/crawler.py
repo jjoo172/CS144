@@ -10,5 +10,5 @@ for link in links:
 		bfs_queue.put(link)
 
 while (bfs_queue.empty() == False):
-	try child_links = fetcher.fetch_links(bfs_queue.get())
-	
+	#try child_links = fetcher.fetch_links(bfs_queue.get())
+	print bfs_queue.get()
