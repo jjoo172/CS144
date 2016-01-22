@@ -47,6 +47,9 @@ fig = plt.gcf()
 plt.show()
 
 
+
+##################################################
+## CCDF
 dx = .01
 
 # x is list of degrees: 1, 2, 3, 4, etc.
@@ -73,40 +76,10 @@ y_array = y_array / (dx*y_array).sum()
 # Compute the CDF
 CY = np.cumsum(y_array*dx)
 
-print x_array
-print y_array
-
 # Plot both
 plt.plot(x_array, 1-CY)
-
-plt.show()
-
-
-"""
-# plot the ccdf by first finding the total amount, and then
-# iterating through each value of x, and determining the probability of that x
-# over the total.
-
-degrees.sort()
-
-ccdf = []
-
-total = sum(degrees)
-
-i = 0.0
-# iterate through each degree, denoted by i
-while (i <= max(degrees)):
-	running_sum = 0.0
-	# for each node, if the degree is less than or equal to i, add it to the running_sum
-	for n in degrees:
-		if n <= i:
-			running_sum += n
-	i = i + 1.0
-	ccdf.append(1 - (running_sum/total))
-
-plt.plot(ccdf)
 plt.title("CCDF")
 plt.xlabel("Degree")
 plt.ylabel("CCDF")
 plt.show()
-"""
+

@@ -31,7 +31,7 @@ while (bfs_queue.empty() == False and depth < 2001):
 		#iterate through children
 		for link in links:
 			if "caltech.edu" in link and link not in visited_links:
-				time.sleep(0.05)
+				time.sleep(0.5)
 
 				# update graph and visited_links array
 				bfs_queue.put(link)
@@ -58,7 +58,7 @@ while (bfs_queue.empty() == False and depth < 2001):
 
 
 # data stuff
-print ("Overall clustering coefficient: " + str(nx.transitivity(G)))
+print ("Overall clustering coefficient: " + str(nx.transitivity(G_undir)))
 
 #since average clustering coefficient can't be calculated for a directed graph, use a non-directed
 # version to  calculate average clustering coefficient.
@@ -109,54 +109,75 @@ plt.show()
 # iterating through each value of x, and determining the probability of that x
 # over the total.
 
-outdegrees.sort()
 
-ccdf = []
+##################################################
+## CCDF
+dx = .01
 
-total = sum(outdegrees)
-
-i = 0.0
-# iterate through each degree, denoted by i
+# x is list of degrees: 1, 2, 3, 4, etc.
+X = []
+i = 0
 while (i <= max(outdegrees)):
-	running_sum = 0.0
-	# for each node, if the degree is less than or equal to i, add it to the running_sum
-	for n in outdegrees:
-		if n <= i:
-			running_sum += n
-	i = i + 1.0
-	ccdf.append(1 - (running_sum/total))
+	X.append(i)
+	i += 1
 
-plt.plot(ccdf)
-plt.title("CCDF of outdegrees")
+x_array = np.array(X)
+
+# y is count for a given degree
+Y  = []
+i = 0
+while (i <= max(outdegrees)):
+	Y.append(outdegrees.count(i))
+	i += 1
+
+y_array = np.array(Y)
+
+# Normalize the data to a proper PDF
+y_array = y_array / (dx*y_array).sum()
+
+# Compute the CDF
+CY = np.cumsum(y_array*dx)
+
+# Plot both
+plt.plot(x_array, 1-CY)
+plt.title("CCDF")
 plt.xlabel("Degree")
 plt.ylabel("CCDF")
 plt.show()
 
 
 
-# plot the ccdf by first finding the total amount, and then
-# iterating through each value of x, and determining the probability of that x
-# over the total.
+##################################################
+## CCDF
+dx = .01
 
-indegrees.sort()
-
-ccdf = []
-
-total = sum(indegrees)
-
-i = 0.0
-# iterate through each degree, denoted by i
+# x is list of degrees: 1, 2, 3, 4, etc.
+X = []
+i = 0
 while (i <= max(indegrees)):
-	running_sum = 0.0
-	# for each node, if the degree is less than or equal to i, add it to the running_sum
-	for n in indegrees:
-		if n <= i:
-			running_sum += n
-	i = i + 1.0
-	ccdf.append(1 - (running_sum/total))
+	X.append(i)
+	i += 1
 
-plt.plot(ccdf)
-plt.title("CCDF of indegrees")
+x_array = np.array(X)
+
+# y is count for a given degree
+Y  = []
+i = 0
+while (i <= max(indegrees)):
+	Y.append(indegrees.count(i))
+	i += 1
+
+y_array = np.array(Y)
+
+# Normalize the data to a proper PDF
+y_array = y_array / (dx*y_array).sum()
+
+# Compute the CDF
+CY = np.cumsum(y_array*dx)
+
+# Plot both
+plt.plot(x_array, 1-CY)
+plt.title("CCDF")
 plt.xlabel("Degree")
 plt.ylabel("CCDF")
 plt.show()
