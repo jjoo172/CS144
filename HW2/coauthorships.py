@@ -9,13 +9,6 @@ with open('net_sci_coauthorships.txt') as data_file:
     data = json.load(data_file)
 
 
-
-#!/usr/bin/env python
-"""
-Random graph from given degree sequence.
-Draw degree rank plot and graph with matplotlib.
-"""
-
 G = nx.Graph()
 
 # initialize nodes in graph
@@ -27,10 +20,7 @@ for node_key in data:
 	#node is a dictionary
 	for value in data[node_key]:
 		G.add_edge(node_key, value)
-		#print node_key, value
 
-#print (G.nodes())
-#print (G.edges())
 
 print ("Overall clustering coefficient: " + str(nx.transitivity(G)))
 print ("Average clustering coefficient: " + str(nx.average_clustering(G)))
@@ -47,7 +37,7 @@ for node in nx.nodes(G):
 degrees.sort()
 
 #plot the histogram of the degrees
-plt.hist(degrees)
+plt.hist(degrees, max(degrees))
 plt.title("Number of vertices with various degrees")
 plt.xlabel("Degree")
 plt.ylabel("Number of vertices")
@@ -56,6 +46,43 @@ fig = plt.gcf()
 
 plt.show()
 
+
+dx = .01
+
+# x is list of degrees: 1, 2, 3, 4, etc.
+X = []
+i = 0
+while (i <= max(degrees)):
+	X.append(i)
+	i += 1
+
+x_array = np.array(X)
+
+# y is count for a given degree
+Y  = []
+i = 0
+while (i <= max(degrees)):
+	Y.append(degrees.count(i))
+	i += 1
+
+y_array = np.array(Y)
+
+# Normalize the data to a proper PDF
+y_array = y_array / (dx*y_array).sum()
+
+# Compute the CDF
+CY = np.cumsum(y_array*dx)
+
+print x_array
+print y_array
+
+# Plot both
+plt.plot(x_array, 1-CY)
+
+plt.show()
+
+
+"""
 # plot the ccdf by first finding the total amount, and then
 # iterating through each value of x, and determining the probability of that x
 # over the total.
@@ -78,27 +105,8 @@ while (i <= max(degrees)):
 	ccdf.append(1 - (running_sum/total))
 
 plt.plot(ccdf)
-plt.show()
-
-
-"""
-degree_sequence=sorted(nx.degree(G).values(),reverse=True) # degree sequence
-#print "Degree sequence", degree_sequence
-dmax=max(degree_sequence)
-
-plt.loglog(degree_sequence,'b-',marker='o')
-plt.title("Degree rank plot")
-plt.ylabel("degree")
-plt.xlabel("rank")
-
-# draw graph in inset
-plt.axes([0.45,0.45,0.45,0.45])
-Gcc=sorted(nx.connected_component_subgraphs(G), key = len, reverse=True)[0]
-pos=nx.spring_layout(Gcc)
-plt.axis('off')
-nx.draw_networkx_nodes(Gcc,pos,node_size=20)
-nx.draw_networkx_edges(Gcc,pos,alpha=0.4)
-
-plt.savefig("degree_histogram.png")
+plt.title("CCDF")
+plt.xlabel("Degree")
+plt.ylabel("CCDF")
 plt.show()
 """
